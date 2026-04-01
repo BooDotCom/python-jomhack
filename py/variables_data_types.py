@@ -24,3 +24,11 @@ print(x/y) # Division
 print(x//y) # Floor Division
 print(x%y) # Modulus
 print(x**y) # Exponentiation
+
+#celsius to fahrenheit conversion
+
+celsius = 30
+fahrenheit = (celsius * 9/5) + 32
+
+print("Temperature in Celsius:", celsius)
+print("Temperature in Fahrenheit:", fahrenheit)
