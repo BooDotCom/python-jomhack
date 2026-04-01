@@ -11,3 +11,16 @@ print(decimal)
 print(type(decimal))
 print(am_single)
 print(type(am_single))
+
+#Math operations
+
+x= 20
+y = 10
+
+print(x+y) # Addition
+print(x-y) # Subtraction
+print(x*y) # Multiplication
+print(x/y) # Division
+print(x//y) # Floor Division
+print(x%y) # Modulus
+print(x**y) # Exponentiation

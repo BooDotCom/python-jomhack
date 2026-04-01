@@ -1,0 +1,2 @@
+go one folder up: cd ..
+go one folder down: cd (folder name)
