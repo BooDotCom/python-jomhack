@@ -1,7 +1,7 @@
-name = "Dave"
-age = 42
-decimal = 3.14
-am_single = True
+name = "Dave" # String
+age = 42 # Integer
+decimal = 3.14 # Float
+am_single = True # Boolean
 
 print(name)
 print(type(name))
