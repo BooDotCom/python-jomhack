@@ -1,3 +1,5 @@
+import time
+
 while True:
     x = input("Enter the first number: ")
     try:
@@ -16,12 +18,19 @@ while True:
     except ValueError:
         print("Invalid input. Please enter a valid number.")
 
-operand = input("""Enter the operation: 
+while True:
+    operand = input("""Enter the operation: 
 + for addition
 - for subtraction
 * for multiplication
 / for division
 Your choice: """)
+
+    if operand in ['+', '-', '*', '/']:
+        break
+    else:
+        print("Invalid operation. Please enter a valid operation.")
+        time.sleep(0.5)
 
 if operand == '+':
     result = x + y
