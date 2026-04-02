@@ -3,6 +3,10 @@ on its delimiter (separator)
 
 usually is whitespace (space bar)
 
+strip():
+- a string method removes whitespace by default from a string.
+- can be specified to remove certain characters.
+
 eg:
 text = "Hello World"
 
