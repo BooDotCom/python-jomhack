@@ -1,5 +1,21 @@
-x = int(input("Enter the first number: "))
-y = int(input("Enter the second number: "))
+while True:
+    x = input("Enter the first number: ")
+    try:
+        x = int(x)
+        if type(x) == int:
+            break
+    except ValueError:
+        print("Invalid input. Please enter a valid number.")
+
+while True:
+    y = input("Enter the second number: ")
+    try:
+        y = int(y)
+        if type(y) == int:
+            break
+    except ValueError:
+        print("Invalid input. Please enter a valid number.")
+
 operand = input("""Enter the operation: 
 + for addition
 - for subtraction
