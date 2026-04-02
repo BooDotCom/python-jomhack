@@ -1,0 +1,15 @@
+split(): converts a string into a list(array) of substrings based
+on its delimiter (separator)
+
+usually is whitespace (space bar)
+
+eg:
+text = "Hello World"
+
+parts = text.split()
+
+print parts
+result: ['Hello', 'World']
+
+to read code, go from bottom to top
+to fix code, go from top to bottom
