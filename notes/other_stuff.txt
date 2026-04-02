@@ -3,3 +3,6 @@ that is written in this file will be ignored
 
 certain files act like the keys to your house(repository), hence
 adding them into .gitignore prevents them from being shared.
+
+__pycache__: acts as a save point. instead going from start to finish,
+the code goes straight to the save point.
