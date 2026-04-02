@@ -1,0 +1,5 @@
+.gitignore: when sharing the files in a repository, stuff
+that is written in this file will be ignored
+
+certain files act like the keys to your house(repository), hence
+adding them into .gitignore prevents them from being shared.
