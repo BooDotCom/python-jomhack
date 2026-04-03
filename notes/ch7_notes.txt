@@ -1,3 +1,11 @@
 immutable: cannot be changed (dictionary)
 
 tuples: a list that can only be read.
+
+effect of attempting to update via append (usually on lists):
+
+Traceback (most recent call last):
+  File "C:\Users\U S E R\Desktop\python bootcamp\py\tuples.py", line 7, in <module>
+    birthday.append(12)  # This will raise an AttributeError because tuples are immutable
+    ^^^^^^^^^^^^^^^
+AttributeError: 'tuple' object has no attribute 'append'
