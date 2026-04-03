@@ -1,1 +1,3 @@
 immutable: cannot be changed (dictionary)
+
+tuples: a list that can only be read.
