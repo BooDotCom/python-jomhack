@@ -1,3 +1,6 @@
+#class: a template of creating an object. can have methods(functions)
+#objects: instance of classes
+
 #basic class definition
 
 class Person:
