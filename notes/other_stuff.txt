@@ -14,3 +14,6 @@ git push
 
 running a file(python for now) in terminal:
 python "(full file name, plus its extension)"
+
+add indent: tab
+remove indent: shift + tab
