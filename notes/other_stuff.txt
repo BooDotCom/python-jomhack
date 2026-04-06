@@ -11,3 +11,6 @@ the 3 commands of adding changes to a github repo:
 git add .
 git commit -m "yer cmment"
 git push
+
+running a file(python for now) in terminal:
+python "(full file name, plus its extension)"
