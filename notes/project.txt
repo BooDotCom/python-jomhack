@@ -1,3 +1,8 @@
 1. one of the api that will be covered must be used.
 2. Idea must be proposed by Friday(?)
 3. No powerpoint, just verbal presentation with screen sharing.
+
+Things to present:
+problem
+solution
+future improvement
