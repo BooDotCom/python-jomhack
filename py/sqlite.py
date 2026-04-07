@@ -81,6 +81,39 @@ class DatabaseManager:
                 ''', (user_id,))
                 return cursor.fetchall()
         
+    def update_user(self,user_id, name, email, age):
+        """Update existing user Id"""
+        try:
+            with sqlite3.connect(self.db_name) as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    UPDATE users
+                    SET name = ?, email = ?, age = ?
+                    WHERE id = ?
+                ''', (name, email, age, user_id)
+                )
+                return cursor.rowcount
+        except sqlite3.IntegrityError as e:
+            print(f"Error: {e}")
+            return None
+
+    def update_post(self,user_id, title, content):
+        """Update existing post based on user ID"""
+        try:
+            with sqlite3.connect(self.db_name) as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    UPDATE posts
+                    SET title = ?, content = ?
+                    WHERE id = ?
+                ''', (title, content, user_id)
+                )
+                return cursor.rowcount
+        except sqlite3.IntegrityError as e:
+            print(f"Error: {e}")
+            return None
+
+
     def delete_user(self, user_id):
          """Delete user and their posts"""
          with sqlite3.connect(self.db_name) as conn:
@@ -128,7 +161,20 @@ def main():
                 print("Invalid age. Please enter a number.")
 
         elif choice == '2':
-            print("Not there yet.")
+            print("\n--- Update User ---")
+            try:
+                user_id = int(input("Enter user ID to update: ").strip())
+                name = input("Enter new name: ").strip()
+                email = input("Enter new email: ").strip()
+                age = int(input("Enter new age: ").strip())
+
+                user_updated = db.update_user(user_id, name, email, age)
+                if user_updated:
+                    print(f"User {user_id} updated successfully!")
+                else:
+                    print("No user found with that ID.")
+            except ValueError:
+                print("Invalid input. Please enter numbers for ID and age.")
 
         elif choice == '3':
             print("\n--- All Users ---")
@@ -154,7 +200,19 @@ def main():
                 print("Invalid user ID. Please enter a number.")
 
         elif choice == '5':
-            print("Not there yet.")
+            print("\n--- Update post ---")
+            try:
+                user_id = int(input("Enter user ID to update: ").strip())
+                title = input("Enter new title: ").strip()
+                content = input("Enter new content: ").strip()
+
+                post_updated = db.update_post(user_id, title, content)
+                if post_updated:
+                    print(f"Post for User {user_id} updated successfully!")
+                else:
+                    print("No user found with that ID.")
+            except ValueError:
+                print("Invalid input. Please enter numbers for ID.")
 
         elif choice == '6':
             print("\n--- View User Posts ---")
