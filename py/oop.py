@@ -24,6 +24,16 @@ class Square(Shape):
     def area(self):
         return self.side ** 2
     
+class Triangle(Shape):
+    def __init__(self, base, height):
+        super().__init__("Circle")
+        self.base=base
+        self.height = height
+
+    def area(self):
+        return 0.5 * self.base * self.height
+
+    
 def print_area(shape):
     print(f"{shape.name} area: {shape.area()}")
 
@@ -31,7 +41,7 @@ def print_area(shape):
 circle = Circle(5)
 square = Square(4)
 
-shapes = [Circle(5), Square(6), Circle(3)]
+shapes = [Circle(5), Square(6), Circle(3),Triangle(4,8)]
 # print(circle.name)
 # print(square.name)
 # print_area(circle)
