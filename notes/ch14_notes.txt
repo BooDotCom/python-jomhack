@@ -1,0 +1,7 @@
+module: a file containing code such as functions, classes, etc.
+Modules can be imported and used in other python programs.
+how to use: from (module name) import (code)
+
+Libraries: collection of modules and packages that provide
+specific functionality.
+how to use: import (library)
