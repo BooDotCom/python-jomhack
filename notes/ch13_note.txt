@@ -1,0 +1,4 @@
+super().__init__(): anything written below belongs to the child class that
+is mentioned in the __init__.
+
+inheritance: passing a parent class's attributes into a child class.
