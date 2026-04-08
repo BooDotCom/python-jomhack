@@ -151,7 +151,7 @@ def main():
             email = input("Enter email: ").strip()
 
             try:
-                age = int(input("Enter name: ").strip())
+                age = int(input("Enter age: ").strip())
                 user_id = db.create_user(name, email, age)
                 if user_id:
                     print(f"User created successfully! ID: {user_id}")
