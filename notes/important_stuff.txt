@@ -1,9 +1,0 @@
-mongodb username:wafiqidraki4332_db_user
-
-mongodb password: 2CSnWPLOVgomdmqO
-
-ip address?: 180.75.238.99
-
-URI: mongodb+srv://wafiqidraki4332_db_user:2CSnWPLOVgomdmqO@cluster0.0vrjj2q.mongodb.net/?appName=Cluster0
-
-run code on cmd line: python -m pip install "pymongo[srv]==3.12"
