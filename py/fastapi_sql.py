@@ -5,7 +5,7 @@
 #get all posts from specific user: /
 #delete user and its posts: /
 #delete specific post: /
-#get specific user:
+#get specific user: /
 #get all posts
 #put user:
 #put post:
@@ -97,6 +97,36 @@ async def get_all_users():
                 detail=f"Internal server error: {str(e)}"
         )
     
+@app.get("/users/{user_id}", response_model=UserResponse)
+async def get_user(user_id: int):
+    """Get specific user by ID"""
+    try:
+        with sqlite3.connect(db.db_name) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+            user = cursor.fetchone()
+
+            if not user:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User not found"
+                )
+            
+        return UserResponse(
+                id=user[0],
+                name=user[1],
+                email=user[2],
+                age=user[3],
+                created_at=user[4],
+            )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Internal server error: {str(e)}"
+        )
+    
 @app.post("/posts/", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def create_post(post: PostCreate):
     """Create a new post"""
@@ -127,6 +157,33 @@ async def create_post(post: PostCreate):
                 detail=f"Internal server error: {str(e)}"
         )
     
+@app.get("/posts/", response_model=List[PostResponse])
+async def get_all_posts():
+    """Get all posts"""
+    try:
+
+        with sqlite3.connect(db.db_name) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM posts ORDER BY created_at DESC")
+            posts = cursor.fetchall()
+
+        return [
+            PostResponse(
+                id=post[0],
+                user_id=post[1],
+                title=post[2],
+                content=post[3],
+                created_at=post[4]
+            )
+            for post in posts
+        ]
+    except Exception as e:
+        raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Internal server error: {str(e)}"
+        )
+
+
 @app.get("/users/{user_id}/posts", response_model=List[PostResponseForUser])
 async def get_user_posts(user_id: int):
     """Get all posts by specific user"""
