@@ -84,6 +84,68 @@ async def get_all_users():
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Internal server error: {str(e)}"
         )
+    
+@app.post("/posts/", response_model=dict, status_code=status.HTTP_201_CREATED)
+async def create_post(post: PostCreate):
+    """Create a new post"""
+    try:
+        #check if user exists
+        with sqlite3.connect(db.db_name) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT id FROM users WHERE id = ?", (post.user_id,))
+            if not cursor.fetchone():
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User not found"
+                )
+
+        post_id = db.create_post(post.user_id, post.title, post.content)
+        if post_id:
+            return {"message": "Post created successfully", "post_id": post_id}
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Failed to create post"
+            )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Internal server error: {str(e)}"
+        )
+    
+@app.get("/users/{user_id}/posts", response_model=List[PostResponseForUser])
+async def get_user_posts(user_id: int):
+    """Get all posts by specific user"""
+    try:
+        #check if user exists
+        with sqlite3.connect(db.db_name) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT id FROM users WHERE id = ?", (user_id,))
+            if not cursor.fetchone():
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User not found"
+                )
+
+        posts = db.get_user_posts(user_id)
+        return [
+            PostResponseForUser(
+                id=post[0],
+                title=post[1],
+                content=post[2],
+                created_at=post[3],
+            )
+            for post in posts
+        ]
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Internal server error: {str(e)}"
+        )
 
 if __name__ == "__main__":
     import uvicorn
