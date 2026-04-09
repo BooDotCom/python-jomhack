@@ -1,0 +1,24 @@
+fastapi: to create the api
+uvicorn: to view the api via swagger
+
+pydantic: ensures data manipulation is consistent throughout
+a process
+
+swagger is used to test connection with api. kinda like a testing
+ground for devs
+
+put = update EVERYTHING on a particular endpoint
+patch = partial update
+
+apparently restful apis are the CRUD
+
+when importing a file, make sure the file does not start with numbers
+
+EmailStr: string but must have '@'. Otherwise, error is thrown.
+
+async: asynchronous function. works simultaneously/consecutively?
+
+running the fast api file: uvicorn file_name:app
+
+be sure to add '/docs' after opening the link. That way,
+you can access the swagger.

@@ -17,3 +17,10 @@ python "(full file name, plus its extension)"
 
 add indent: tab
 remove indent: shift + tab
+
+apparently you CAN install multiple packages(?) at once. eg:
+pip install pydantic uvicorn fastapi
+line above installs 3 packages at once.
+
+--reload causes the program to check for changes every MICROSECOND
+so yeah, you don't want your device to commit sudoku, don't cha?
