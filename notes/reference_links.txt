@@ -1,1 +1,2 @@
 Python exceptions - https://www.w3schools.com/python/python_ref_exceptions.asp
+https://llm-stats.com/ - check how good certain llm ais are
