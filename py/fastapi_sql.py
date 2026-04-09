@@ -6,7 +6,8 @@
 #delete user and its posts: /
 #delete specific post: /
 #get specific user: /
-#get all posts
+#get specific post:
+#get all posts: /
 #put user:
 #put post:
 
@@ -16,6 +17,7 @@ from typing import List, Optional
 from datetime import datetime
 import sqlite3
 from sqlite_database import DatabaseManager
+from typing import Optional
 
 app = FastAPI(title="SQLite Database API", version ="1.0.0")
 
@@ -25,6 +27,11 @@ class UserCreate(BaseModel):
     name: str
     email: EmailStr
     age: int
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    age: Optional[int] = None
 
 class UserResponse(BaseModel):
     id: int
@@ -37,6 +44,11 @@ class PostCreate(BaseModel):
     user_id: int
     title: str
     content: str
+
+class PostUpdate(BaseModel):
+    # user_id: Optional[int] = None
+    title: Optional[str] = None
+    content: Optional[str] = None
 
 class PostResponse(BaseModel):
     id: int
@@ -269,6 +281,59 @@ async def delete_post(post_id: int):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Internal server error: {str(e)}"
         )
+    
+@app.put("/users/{user_id}", response_model=dict)
+async def put_user(user_id: int, user: UserUpdate):
+    """Update user by ID"""
+    try:
+        #check if user exists
+        with sqlite3.connect(db.db_name) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+            if not cursor.fetchone():
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User not found"
+                )
+            
+        update_user = db.update_user(user_id, user.name, user.email, user.age)
+        if update_user:
+            return {"message": "User updated successfully", "user_id": user_id}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Internal server error: {str(e)}"
+        )
+    
+@app.put("/posts/{user_id}", response_model=dict)
+async def put_post(user_id: int, post: PostUpdate):
+    """Update post by user ID"""
+    try:
+        #check if user exists
+        with sqlite3.connect(db.db_name) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM posts WHERE user_id = ?", (user_id,))
+            if not cursor.fetchone():
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Post not found"
+                )
+            
+        update_post = db.update_post(user_id, post.title, post.content)
+        if update_post:
+            return {"message": "Post updated successfully", "user_id": user_id}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Internal server error: {str(e)}"
+        )
+
 
 if __name__ == "__main__":
     import uvicorn
