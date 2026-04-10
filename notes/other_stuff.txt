@@ -24,3 +24,6 @@ line above installs 3 packages at once.
 
 --reload causes the program to check for changes every MICROSECOND
 so yeah, you don't want your device to commit sudoku, don't cha?
+
+deprecated(in vs code: a syntax is crossed): the code is usable,
+but will be unusable in the future.
