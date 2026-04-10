@@ -16,3 +16,5 @@ fullstack is frontend AND backend
 frontend frameworks:
 flutter for mobile
 react, angular for web
+
+when connecting to api, the host and port must be specific, otherwise failed connection
