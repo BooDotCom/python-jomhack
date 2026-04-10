@@ -1,6 +1,6 @@
 #checklist:
-#post new user: 
-#get all users: 
+#post new user: /
+#get all users: /
 #post new post: 
 #get all posts from specific user: 
 #delete user and its posts: 
