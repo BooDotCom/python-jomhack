@@ -1,8 +1,8 @@
 #checklist:
 #post new user: /
 #get all users: /
-#post new post: 
-#get all posts from specific user: 
+#post new post: /
+#get all posts from specific user: / 
 #delete user and its posts: 
 #delete specific post: 
 #get specific user: 
@@ -195,31 +195,33 @@ async def create_post(post: PostCreate):
                 detail=f"Internal server error: {str(e)}"
         )
     
-# @app.get("/posts/", response_model=List[PostResponse])
-# async def get_all_posts():
-#     """Get all posts"""
-#     try:
+@app.get("/posts/", response_model=List[PostResponse])
+async def get_all_posts():
+    """Get all posts"""
+    try:
 
-#         with sqlite3.connect(db.db_name) as conn:
-#             cursor = conn.cursor()
-#             cursor.execute("SELECT * FROM posts ORDER BY created_at DESC")
-#             posts = cursor.fetchall()
+        posts = list(db.posts_collection.find().sort("created_at", -1))
 
-#         return [
-#             PostResponse(
-#                 id=post[0],
-#                 user_id=post[1],
-#                 title=post[2],
-#                 content=post[3],
-#                 created_at=post[4]
-#             )
-#             for post in posts
-#         ]
-#     except Exception as e:
-#         raise HTTPException(
-#                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#                 detail=f"Internal server error: {str(e)}"
-#         )
+        #convert objectid to string for response
+        for post in posts:
+            post['_id'] = str(post['_id'])
+            post['user_id'] = str(post['user_id'])
+
+        return [
+            PostResponse(
+                id=post['_id'],
+                user_id=post['user_id'],
+                title=post['title'],
+                content=post['content'],
+                created_at=post['created_at']
+            )
+            for post in posts
+        ]
+    except Exception as e:
+        raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Internal server error: {str(e)}"
+        )
 
 @app.get("/users/{user_id}/posts", response_model=List[PostResponseForUser])
 async def get_user_posts(user_id: str):
