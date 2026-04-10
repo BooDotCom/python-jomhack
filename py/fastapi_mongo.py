@@ -296,29 +296,33 @@ async def delete_user(user_id: str):
                 detail=f"Internal server error: {str(e)}"
         )
 
-# @app.delete("/posts/{post_id}", response_model=dict)
-# async def delete_post(post_id: int):
-#     """Delete specific post"""
-#     try:
-#         with sqlite3.connect(db.db_name) as conn:
-#             cursor = conn.cursor()
-#             cursor.execute("DELETE FROM posts WHERE id = ?", (post_id,))
+@app.delete("/posts/{post_id}", response_model=dict)
+async def delete_post(post_id: str):
+    """Delete specific post"""
+    try:
+        if not ObjectId.is_valid(post_id):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid user ID format"
+            )
             
-#             if cursor.rowcount == 0:
-#                 raise HTTPException(
-#                     status_code=status.HTTP_404_NOT_FOUND,
-#                     detail="Post not found"
-#                 )
-            
-#         return {"message": "Post deleted successfully"}
+        result = db.posts_collection.delete_one({"_id": ObjectId(post_id)})
 
-#     except HTTPException:
-#         raise
-#     except Exception as e:
-#         raise HTTPException(
-#                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#                 detail=f"Internal server error: {str(e)}"
-#         )
+        if result.deleted_count == 0:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Post not found"
+            )
+            
+        return {"message": "Post deleted successfully"}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Internal server error: {str(e)}"
+        )
     
 # @app.put("/users/{user_id}", response_model=dict)
 # async def put_user(user_id: int, user: UserUpdate):
