@@ -261,35 +261,40 @@ async def get_user_posts(user_id: str):
                 detail=f"Internal server error: {str(e)}"
         )
 
-# @app.delete("/users/{user_id}", response_model=dict)
-# async def delete_user(user_id: int):
-#     """Delete user and all their posts"""
-#     try:
-#         #check if user exists
-#         with sqlite3.connect(db.db_name) as conn:
-#             cursor = conn.cursor()
-#             cursor.execute("SELECT id FROM users WHERE id = ?", (user_id,))
-#             if not cursor.fetchone():
-#                 raise HTTPException(
-#                     status_code=status.HTTP_404_NOT_FOUND,
-#                     detail="User not found"
-#                 )
+@app.delete("/users/{user_id}", response_model=dict)
+async def delete_user(user_id: str):
+    """Delete user and all their posts"""
+    try:
 
-#         success = db.delete_user(user_id)
-#         if success:
-#             return {"message": "User deleted successfully"}
-#         else:
-#             raise HTTPException(
-#                 status_code=status.HTTP_400_BAD_REQUEST,
-#                 detail="Failed to delete user"
-#             )
-#     except HTTPException:
-#         raise
-#     except Exception as e:
-#         raise HTTPException(
-#                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#                 detail=f"Internal server error: {str(e)}"
-#         )
+        if not ObjectId.is_valid(user_id):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid user ID format"
+            )
+
+        #check if user exists
+        user = db.users_collection.find_one({"_id": ObjectId(user_id)})
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+
+        success = db.delete_user(user_id)
+        if success:
+            return {"message": "User deleted successfully"}
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Failed to delete user"
+            )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Internal server error: {str(e)}"
+        )
 
 # @app.delete("/posts/{post_id}", response_model=dict)
 # async def delete_post(post_id: int):
