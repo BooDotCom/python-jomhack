@@ -1,0 +1,2 @@
+sqlite: uses indexing when accessing data
+mongo: uses keys
