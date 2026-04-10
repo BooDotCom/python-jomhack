@@ -8,7 +8,7 @@
 #get specific user: 
 #get specific post:
 #get all posts: /
-#put user:
+#put user: /
 #put post:
 
 from fastapi import FastAPI, HTTPException, status
@@ -325,7 +325,7 @@ async def delete_post(post_id: str):
         )
     
 @app.put("/users/{user_id}", response_model=dict)
-async def put_user(user_id: str, user_update: UserUpdate):
+async def update_user(user_id: str, user_update: UserUpdate):
     """Update user by ID"""
     try:
 
@@ -364,31 +364,43 @@ async def put_user(user_id: str, user_update: UserUpdate):
                 detail=f"Internal server error: {str(e)}"
         )
     
-# @app.put("/posts/{user_id}", response_model=dict)
-# async def put_post(user_id: int, post: PostUpdate):
-#     """Update post by user ID"""
-#     try:
-#         #check if user exists
-#         with sqlite3.connect(db.db_name) as conn:
-#             cursor = conn.cursor()
-#             cursor.execute("SELECT * FROM posts WHERE user_id = ?", (user_id,))
-#             if not cursor.fetchone():
-#                 raise HTTPException(
-#                     status_code=status.HTTP_404_NOT_FOUND,
-#                     detail="Post not found"
-#                 )
-            
-#         update_post = db.update_post(user_id, post.title, post.content)
-#         if update_post:
-#             return {"message": "Post updated successfully", "user_id": user_id}
+@app.put("/posts/{post_id}", response_model=dict)
+async def update_post(post_id: str, title: str, content:str):#post: PostUpdate):
+    """Update post by post ID"""
+    try:
 
-#     except HTTPException:
-#         raise
-#     except Exception as e:
-#         raise HTTPException(
-#                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#                 detail=f"Internal server error: {str(e)}"
-#         )
+        if not ObjectId.is_valid(post_id):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid post ID format"
+            )
+
+        #check if post exists
+        post = db.posts_collection.find_one({"_id": ObjectId(post_id)})
+        if not post:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="post not found"
+            )
+
+        #Update post    
+        result = db.posts_collection.update_one(
+            {"_id": ObjectId(post_id)},
+            {"$set": {
+                "title": title,
+                "content": content
+            }}
+        )
+        if result.modified_count > 0 :
+            return {"message": "Post updated successfully"}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Internal server error: {str(e)}"
+        )
 
 
 if __name__ == "__main__":
