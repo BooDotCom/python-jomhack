@@ -3,11 +3,11 @@
 #get all users: /
 #post new post: /
 #get all posts from specific user: / 
-#delete user and its posts: 
-#delete specific post: 
+#delete user and its posts: /
+#delete specific post: /
 #get specific user: 
 #get specific post:
-#get all posts: 
+#get all posts: /
 #put user:
 #put post:
 
@@ -34,9 +34,9 @@ class UserCreate(BaseModel):
     age: int
 
 class UserUpdate(BaseModel):
-    name: Optional[str] = None
-    email: Optional[EmailStr] = None
-    age: Optional[int] = None
+    name: Optional[str]
+    email: Optional[EmailStr]
+    age: Optional[int]
 
 class UserResponse(BaseModel):
     id: str
@@ -324,31 +324,45 @@ async def delete_post(post_id: str):
                 detail=f"Internal server error: {str(e)}"
         )
     
-# @app.put("/users/{user_id}", response_model=dict)
-# async def put_user(user_id: int, user: UserUpdate):
-#     """Update user by ID"""
-#     try:
-#         #check if user exists
-#         with sqlite3.connect(db.db_name) as conn:
-#             cursor = conn.cursor()
-#             cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
-#             if not cursor.fetchone():
-#                 raise HTTPException(
-#                     status_code=status.HTTP_404_NOT_FOUND,
-#                     detail="User not found"
-#                 )
-            
-#         update_user = db.update_user(user_id, user.name, user.email, user.age)
-#         if update_user:
-#             return {"message": "User updated successfully", "user_id": user_id}
+@app.put("/users/{user_id}", response_model=dict)
+async def put_user(user_id: str, user_update: UserUpdate):
+    """Update user by ID"""
+    try:
 
-#     except HTTPException:
-#         raise
-#     except Exception as e:
-#         raise HTTPException(
-#                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#                 detail=f"Internal server error: {str(e)}"
-#         )
+        if not ObjectId.is_valid(user_id):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid user ID format"
+            )
+
+        #check if user exists
+        user = db.users_collection.find_one({"_id": ObjectId(user_id)})
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+            
+        #update user
+        result = db.users_collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": {
+                "name": user_update.name,
+                "email": user_update.email,
+                "age": user_update.age
+            }}
+        )
+
+        if result.modified_count > 0:
+            return {"message": "User updated successfully"}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Internal server error: {str(e)}"
+        )
     
 # @app.put("/posts/{user_id}", response_model=dict)
 # async def put_post(user_id: int, post: PostUpdate):
