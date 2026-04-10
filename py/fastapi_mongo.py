@@ -131,26 +131,29 @@ async def get_all_users():
         )
     
 # @app.get("/users/{user_id}", response_model=UserResponse)
-# async def get_user(user_id: int):
+# async def get_user(user_id: str):
 #     """Get specific user by ID"""
 #     try:
-#         with sqlite3.connect(db.db_name) as conn:
-#             cursor = conn.cursor()
-#             cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
-#             user = cursor.fetchone()
+        
+#         if not ObjectId.is_valid(user_id):
+#             raise HTTPException(
+#                 status_code=status.HTTP_400_BAD_REQUEST,
+#                 detail="Invalid user ID format"
+#             )
 
-#             if not user:
-#                 raise HTTPException(
-#                     status_code=status.HTTP_404_NOT_FOUND,
-#                     detail="User not found"
-#                 )
+#         user = db.users_collection.find_one({"_id": ObjectId(user_id)})
+#         if not user:
+#             raise HTTPException(
+#                 status_code=status.HTTP_404_NOT_FOUND,
+#                 detail="User not found"
+#             )
             
 #         return UserResponse(
-#                 id=user[0],
-#                 name=user[1],
-#                 email=user[2],
-#                 age=user[3],
-#                 created_at=user[4],
+#                 id=user['_id'],
+#                 name=user['name'],
+#                 email=user['email'],
+#                 age=user['age'],
+#                 created_at=user['created_at'],
 #             )
 #     except HTTPException:
 #         raise
