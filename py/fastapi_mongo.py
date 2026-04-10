@@ -109,26 +109,26 @@ async def create_user(user: UserCreate):
                 detail=f"Internal server error: {str(e)}"
         )
 
-# @app.get("/users/", response_model=List[UserResponse])
-# async def get_all_users():
-#     """Get all users"""
-#     try:
-#         users = db.get_all_users()
-#         return [
-#             UserResponse(
-#                 id=user[0],
-#                 name=user[1],
-#                 email=user[2],
-#                 age=user[3],
-#                 created_at=user[4],
-#             )
-#             for user in users
-#         ]
-#     except Exception as e:
-#         raise HTTPException(
-#                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#                 detail=f"Internal server error: {str(e)}"
-#         )
+@app.get("/users/", response_model=List[UserResponse])
+async def get_all_users():
+    """Get all users"""
+    try:
+        users = db.get_all_users()
+        return [
+            UserResponse(
+                id=user['_id'],
+                name=user['name'],
+                email=user['email'],
+                age=user['age'],
+                created_at=user['created_at'],
+            )
+            for user in users
+        ]
+    except Exception as e:
+        raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Internal server error: {str(e)}"
+        )
     
 # @app.get("/users/{user_id}", response_model=UserResponse)
 # async def get_user(user_id: int):
