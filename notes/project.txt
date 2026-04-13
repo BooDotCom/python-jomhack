@@ -18,3 +18,7 @@ flutter for mobile
 react, angular for web
 
 when connecting to api, the host and port must be specific, otherwise failed connection
+
+localhost = 127.0.0.1
+
+ctrl + c = stop/kill program

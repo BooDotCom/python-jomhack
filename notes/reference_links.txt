@@ -1,2 +1,11 @@
 Python exceptions - https://www.w3schools.com/python/python_ref_exceptions.asp
 https://llm-stats.com/ - check how good certain llm ais are
+
+how to run with uvicorn:
+uvicorn file_name:app
+
+how to run with streamlit:
+streamlit run file_name.py
+
+how to run python file:
+py/python file_name.py
