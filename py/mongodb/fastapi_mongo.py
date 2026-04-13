@@ -408,4 +408,4 @@ async def update_post(post_id: str, title: str, content:str):#post: PostUpdate):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host = "0.0.0.0", port = 8001)
+    uvicorn.run(app, host = "0.0.0.0", port = 8000)
