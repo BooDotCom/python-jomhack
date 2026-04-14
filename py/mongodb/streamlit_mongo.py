@@ -117,8 +117,8 @@ def main():
         users_page()
     elif page == "📝 Posts":
         posts_page()
-    # elif page == "☰ Dashboard":
-    #     dashboard_page()
+    elif page == "☰ Dashboard":
+        dashboard_page()
 
 def users_page():
     st.header("👥 User Management")
@@ -274,6 +274,60 @@ def posts_page():
             st.info(f"Total posts: {len(posts)}")
         else:
             st.info("No posts found")
+
+def dashboard_page():
+    st.header("☰ Dashboard")
+
+    #Get data for dashboard
+    users, users_success = get_all_users()
+    posts, posts_success = get_all_posts()
+
+    if users_success and posts_success:
+        #Metrics
+        col1, col2, col3, col4 = st.columns(4)
+
+        with col1:
+            st.metric("Total Users", len(users))
+
+        with col2:
+            st.metric("Total Posts", len(posts))
+        
+        with col3:
+            avg_age = sum(user['age'] for user in users) / len(users) if users else 0
+            st.metric("Average Age", f"{avg_age:.1f}")
+
+        with col4:
+            posts_per_user = len(posts) / len(users) if users else 0
+            st.metric("Posts per User", f"{posts_per_user:.1f}")
+
+        st.markdown("---")
+
+        #Charts
+        if users:
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.subheader("Age Distribution")
+                age_data = [user['age'] for user in users]
+                st.bar_chart(pd.Series(age_data).value_counts().sort_index())
+
+            with col2:
+                st.subheader("Recent Activity")
+                if posts:
+                    #Posts by date
+                    posts_df = pd.DataFrame(posts)
+                    posts_df['date'] = pd.to_datetime(posts_df['created_at']).dt.date
+                    daily_posts = posts_df.groupby('date').size()
+                    st.line_chart(daily_posts)
+
+        #Recent posts
+        st.subheader("Recent Posts")
+        if posts:
+            recent_posts = sorted(posts, key=lambda x: x['created_at'], reverse=True)[:5]
+            for post in recent_posts:
+                st.write(f"- **{post['title']}** - {pd.to_datetime(post['created_at']).strftime('%Y-%m-%d %H:%M')}")
+    else:
+        st.error("Failed to load dashboard data")
 
 if __name__ == "__main__":
     main()
