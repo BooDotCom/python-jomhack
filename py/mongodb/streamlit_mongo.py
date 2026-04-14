@@ -88,6 +88,16 @@ def get_all_posts():
     except Exception as e:
         return [], False
 
+def get_user_posts(user_id):
+    """Get all posts for specific user"""
+    try:
+        response = requests.get(f"{API_BASE_URL}/users/{user_id}/posts")
+        if response.status_code == 200:
+            return response.json(), True
+        return [], False
+    except Exception as e:
+        return [], False
+
 def delete_post(post_id):
     """Delete a post via API"""
     try:
@@ -274,6 +284,28 @@ def posts_page():
             st.info(f"Total posts: {len(posts)}")
         else:
             st.info("No posts found")
+
+    with tab3:
+        st.subheader("Posts by User")
+
+        users, users_success = get_all_users()
+
+        if users_success and users:
+            user_options = {f"{user['name']} ({user['email']})": user['id'] for user in users}
+            selected_user_display = st.selectbox("Select User to view posts", list(user_options.keys()))
+
+            if selected_user_display:
+                user_id = user_options[selected_user_display]
+                posts, success = get_user_posts(user_id)
+
+                if success and posts:
+                    st.write(f"**Posts by {selected_user_display}: **")
+                    for post in posts:
+                        with st.expander(f"📝 {post['title']}"):
+                            st.write(f"**Content: ** {post['content']}")
+                            st.write(f"**Created: ** {pd.to_datetime(post['created_at']).strftime('%Y-%m-%d %H:%M:%S')}")
+                else:
+                    st.info("No posts found for this user")
 
 def dashboard_page():
     st.header("☰ Dashboard")
