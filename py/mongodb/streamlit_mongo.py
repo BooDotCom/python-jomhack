@@ -48,11 +48,33 @@ def get_all_users():
     except Exception as e:
         return [], False
     
+def update_user(user_id, name, email, age):
+    """Update a user via API"""
+    try:
+        response = requests.put(
+            f"{API_BASE_URL}/users/{user_id}",
+            json={"name": name, "email": email, "age": age}
+        )
+        return response.json(), response.status_code == 200
+    except Exception as e:
+        return {"error": str(e)}, False
+    
 def delete_user(user_id):
     """Delete a user via API"""
     try:
         response = requests.delete(f"{API_BASE_URL}/users/{user_id}")
         return response.json(), response.status_code == 200
+    except Exception as e:
+        return{"error": str(e)}, False
+    
+def create_post(user_id, title, content):
+    """Create a new user via API"""
+    try:
+        response = requests.post(
+            f"{API_BASE_URL}/posts/",
+            json={"user_id": user_id, "title": title, "content": content}
+        )
+        return response.json(), response.status_code == 201
     except Exception as e:
         return{"error": str(e)}, False
     
@@ -75,8 +97,8 @@ def main():
 
     if page == "👥 Users":
         users_page()
-    # elif page == "📝 Posts":
-    #     posts_page()
+    elif page == "📝 Posts":
+        posts_page()
     # elif page == "☰ Dashboard":
     #     dashboard_page()
 
@@ -172,7 +194,45 @@ def users_page():
                         else:
                             st.error(f"Error: {result.get('detail', 'Unknown error')}")
 
-                
+def posts_page():
+    st.header("📝 Post Management")
+
+    #Create tabs for different post operations
+    tab1, tab2, tab3 = st.tabs(["Create Post", "View Posts", "Manage Posts"])
+
+    with tab1:
+        st.subheader("Create New Post")
+
+        #get users from dropdown
+        users, users_success = get_all_users()
+        if users_success and users:
+
+            with st.form("create_post_form"):
+                #User selection
+                user_options = {f"{user['name']} ({user['email']})": user['id'] for user in users}
+                selected_user_display = st.selectbox("Select User", list(user_options.keys()))
+
+                # col1, col2 = st.columns(2)
+                # with col1:
+                title = st.text_input("Post Title", placeholder="Enter post title")
+                content = st.text_area("Post Content", placeholder="Enter post content", height =150)
+                # # with col2:
+                # age = st.number_input("Age", min_value=1, max_value=120, value=25)
+
+                submitted = st.form_submit_button("Create Post", type="primary")
+
+                if submitted:
+                    if selected_user_display and title and content:
+                        user_id = user_options[selected_user_display]
+                        
+                        result, success = create_post(user_id, title, content)
+                        if success:
+                            st.success(f"Post created successfully! ID: {result.get('post_id')}")
+                            st.rerun()
+                        else:
+                            st.error(f"Error: {result.get('detail', 'Unknown error')}")
+                    else:
+                        st.error("Please fill in all fields.")
 
 if __name__ == "__main__":
     main()
