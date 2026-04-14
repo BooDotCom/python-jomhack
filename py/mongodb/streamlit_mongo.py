@@ -77,7 +77,25 @@ def create_post(user_id, title, content):
         return response.json(), response.status_code == 201
     except Exception as e:
         return{"error": str(e)}, False
-    
+
+def get_all_posts():
+    """Get all posts via API"""
+    try:
+        response = requests.get(f"{API_BASE_URL}/posts/")
+        if response.status_code == 200:
+            return response.json(), True
+        return [], False
+    except Exception as e:
+        return [], False
+
+def delete_post(post_id):
+    """Delete a post via API"""
+    try:
+        response = requests.delete(f"{API_BASE_URL}/posts/{post_id}")
+        return response.json(), response.status_code == 200
+    except Exception as e:
+        return{"error": str(e)}, False
+
 def main():
     st.title("🗄️ MongoDB Database Manager")
     st.markdown("---")
@@ -212,12 +230,8 @@ def posts_page():
                 user_options = {f"{user['name']} ({user['email']})": user['id'] for user in users}
                 selected_user_display = st.selectbox("Select User", list(user_options.keys()))
 
-                # col1, col2 = st.columns(2)
-                # with col1:
                 title = st.text_input("Post Title", placeholder="Enter post title")
                 content = st.text_area("Post Content", placeholder="Enter post content", height =150)
-                # # with col2:
-                # age = st.number_input("Age", min_value=1, max_value=120, value=25)
 
                 submitted = st.form_submit_button("Create Post", type="primary")
 
@@ -233,6 +247,33 @@ def posts_page():
                             st.error(f"Error: {result.get('detail', 'Unknown error')}")
                     else:
                         st.error("Please fill in all fields.")
+        
+    with tab2:
+        st.subheader("All Posts")
+        posts, success = get_all_posts()
+
+        if success and posts:
+        
+            for post in posts:
+                with st.expander(f"📝 {post['title']} (ID: {post['id'][:8]})"):
+                    col1, col2 = st.columns([3,1])
+                    with col1:
+                        st.write(f"**Content: ** {post['content']}")
+                        st.write(f"**Created: ** {pd.to_datetime(post['created_at']).strftime('%Y-%m-%d %H:%M:%S')}")
+                    with col2:
+                        st.write(f"**User ID: ** {post['user_id'][:8]}...")
+                        if st.button(f"Delete", key=f"delete_user_{post['id']}", type="secondary"):
+                            result, success = delete_post(post['id'])
+                            if success:
+                                st.success("Post deleted.")
+                                st.rerun()
+                            else:
+                                st.error("Failed to delete post")
+
+            #Show user count
+            st.info(f"Total posts: {len(posts)}")
+        else:
+            st.info("No posts found")
 
 if __name__ == "__main__":
     main()
